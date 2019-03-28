@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include <SDL.h>
-
+#include "rule.h"
 #include <SDL_ttf.h>
 using namespace std;
 bool lose(int x,int y){
@@ -22,11 +22,12 @@ bool lose(int x,int y){
 //  else if (()&&()) return true;
   else return false;
 }
-
+/*
 void refreshScreen(SDL_Window* window, SDL_Renderer* renderer, const SDL_Rect& filled_rect)
 {
     // Đặt màu vẽ thành xanh lam (blue), xoá màn hình về màu xanh lam.
- SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL_RenderClear(renderer);
 
     // Đặt màu vẽ về trắng và vẽ hình chữ nhật
@@ -117,12 +118,14 @@ void refreshScreen(SDL_Window* window, SDL_Renderer* renderer, const SDL_Rect& f
     SDL_RenderDrawLine(renderer,230,380,230,400);
 
 
+        SDL_RenderPresent(renderer);
     // Dùng lệnh hiển thị (đưa) hình đã vẽ ra mành hình
    //Khi thông thường chạy với môi trường bình thường ở nhà
        //Khi chạy ở máy thực hành WinXP ở trường (máy ảo)
    //SDL_UpdateWindowSurface(window);
 }
-void gameOver(SDL_Renderer* renderer,SDL_Event event)
+*/
+void gameOver(SDL_Renderer* renderer,SDL_Event event,int m)
 {
     SDL_Color Red = { 255, 0, 0 };
 	SDL_Color White = { 255, 255, 255 };
@@ -130,19 +133,22 @@ void gameOver(SDL_Renderer* renderer,SDL_Event event)
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-	//Get the font used for displaying text
-	TTF_Font* font = TTF_OpenFont((char*)"lamba.ttf", 30);
+
+	TTF_Font* font = TTF_OpenFont((char*)"lightitalic.ttf", 30);
 	if (font == NULL) {
-		//font not loaded? print an error and return
+
 		cout << "Font loading error" << endl;
 		return;
 	}
 
 	SDL_Surface* gameover = TTF_RenderText_Solid(font, "Game Over", Red);
     SDL_Surface* retry = TTF_RenderText_Solid(font, "Press enter to retry", Black);
-	//SDL_Surface* score = TTF_RenderText_Solid(font, (string("Score: ") + to_string(tailLength * 10)).c_str(), Black);
+    SDL_Surface* point = TTF_RenderText_Solid(font, ( to_string(m*1000)).c_str(), Black);
+
 	SDL_Texture* gameoverMessage = SDL_CreateTextureFromSurface(renderer, gameover);
     SDL_Texture* retryMessage = SDL_CreateTextureFromSurface(renderer, retry);
+	SDL_Texture* pointMessage = SDL_CreateTextureFromSurface(renderer, point);
+
 	SDL_Rect gameoverRect;
 
 	gameoverRect.w = 200;
@@ -157,8 +163,16 @@ void gameOver(SDL_Renderer* renderer,SDL_Event event)
 	retryRect.x = 87;
 	retryRect.y = 200;
 
+	SDL_Rect pointRect;
+
+	pointRect.w = 100;
+	pointRect.h = 40;
+	pointRect.x = 200;
+	pointRect.y = 300;
+
 	SDL_RenderCopy(renderer, gameoverMessage, NULL, &gameoverRect);
     SDL_RenderCopy(renderer, retryMessage, NULL, &retryRect);
+    SDL_RenderCopy(renderer, pointMessage, NULL, &pointRect);
 	TTF_CloseFont(font);
 
 
@@ -184,28 +198,32 @@ void mybegin(SDL_Renderer* renderer,SDL_Event event)
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-	//Get the font used for displaying text
+
 	TTF_Font* font = TTF_OpenFont((char*)"lamba.ttf", 30);
 	if (font == NULL) {
-		//font not loaded? print an error and return
+
 		cout << "Font loading error" << endl;
 		return;
 	}
 
-	SDL_Surface* mybegin1 = TTF_RenderText_Solid(font, "oho", Red);
-
-	//SDL_Surface* score = TTF_RenderText_Solid(font, (string("Score: ") + to_string(tailLength * 10)).c_str(), Black);
+	SDL_Surface* mybegin1 = TTF_RenderText_Solid(font, "aaa", Black);
+    //SDL_Surface* mybegin2 = TTF_RenderText_Solid(font, "press enter to start", Black);
 	SDL_Texture* beginMessage = SDL_CreateTextureFromSurface(renderer, mybegin1);
-    //SDL_Texture* retryMessage = SDL_CreateTextureFromSurface(renderer, retry);
+    //SDL_Texture* beginMessage2 = SDL_CreateTextureFromSurface(renderer, mybegin2);
 	SDL_Rect beginRect;
-
 	beginRect.w = 200;
 	beginRect.h = 100;
 	beginRect.x = 200;
 	beginRect.y = 100;
 
+	SDL_Rect beginRect2;
+	beginRect2.w = 400;
+	beginRect2.h = 100;
+	beginRect2.x = 100;
+	beginRect2.y = 400;
+
 	SDL_RenderCopy(renderer, beginMessage, NULL, &beginRect);
-    //SDL_RenderCopy(renderer, retryMessage, NULL, &retryRect);
+	//SDL_RenderCopy(renderer, beginMessage2, NULL, &beginRect2);
 	TTF_CloseFont(font);
 
 
@@ -222,19 +240,17 @@ void mybegin(SDL_Renderer* renderer,SDL_Event event)
 	}
 
 }
-
+/*
 void score(SDL_Renderer* renderer,SDL_Event event, int m){
     SDL_Color Black = { 0, 0, 0 };
-	//Get the font used for displaying text
 	TTF_Font* font = TTF_OpenFont((char*)"lightitalic.ttf", 30);
 	if (font == NULL) {
-		//font not loaded? print an error and return
 		cout << "Font loading error" << endl;
 		return;
 	}
-	//c_str() allows normal strings to be rendered here, otherwise the rendered text would have to be a const char* type
-	//Const char* values cannot be changed after initialization, but we need dynamic text here
-	SDL_Surface* score = TTF_RenderText_Solid(font, ( to_string(m * 10)).c_str(), Black);
+
+
+    SDL_Surface* score = TTF_RenderText_Solid(font, ( to_string(m*1000)).c_str(), Black);
 	SDL_Texture* scoreMessage = SDL_CreateTextureFromSurface(renderer, score);
 	int a;
 	if(m < 1){
@@ -252,10 +268,35 @@ void score(SDL_Renderer* renderer,SDL_Event event, int m){
 	scoreRect.x = 480;
 	scoreRect.y = 20;
 	SDL_RenderCopy(renderer, scoreMessage, NULL, &scoreRect);
-	//Close font before finishing so this font doesn't collide with any other function's font
-	TTF_CloseFont(font);
+
+    SDL_RenderPresent(renderer);
+    TTF_CloseFont(font);
 
 
 }
 
+void mytime(SDL_Renderer* renderer, int m,SDL_Event event)
+{
+    //SDL_RenderClear(renderer);
+    SDL_Color Black = { 0, 0, 0 };
+	TTF_Font* font = TTF_OpenFont((char*)"lightitalic.ttf", 30);
+	if (font == NULL) {
+		cout << "Font loading error" << endl;
+		return;
+	}
+	int a = 20 - m/1000;
 
+
+    SDL_Surface* Mytime = TTF_RenderText_Solid(font, ( to_string(a)).c_str(), Black);
+	SDL_Texture* timeMessage = SDL_CreateTextureFromSurface(renderer, Mytime);
+	SDL_Rect timeRect;
+	timeRect.w = 50;
+	timeRect.h = 30;
+	timeRect.x = 480;
+	timeRect.y = 80;
+	SDL_RenderCopy(renderer, timeMessage, NULL, &timeRect);
+	SDL_RenderPresent(renderer);
+    TTF_CloseFont(font);
+    SDL_DestroyTexture(timeMessage);
+}
+*/
