@@ -10,28 +10,15 @@
 using namespace std;
 
 
-/*
-void Myfood(SDL_Window* window, SDL_Renderer* renderer, const SDL_Rect& filled_rect)
-{
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-    SDL_RenderFillRect(renderer, &filled_rect);
-
-        SDL_RenderPresent(renderer);
-
-}
-*/
-
-
 int main(int argc, char* argv[])
 {
 
     while(true){
     initSDL(window, renderer, SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
-    // Your code here
-     int c =SDL_GetTicks();
+
     SDL_Event e;
     mybegin(renderer,e);
-    // Định nghĩa toạ độ ban đầu và kích cỡ hình chữ nhật
+
     SDL_Rect filled_rect;
     filled_rect.x = 0;
     filled_rect.y = 0;
@@ -39,23 +26,21 @@ int main(int argc, char* argv[])
     filled_rect.h = 20;
 
     SDL_Rect food;
-    food.x = 25;
-    food.y = 25;
+    food.x = 80;
+    food.y = 90;
     food.w = 10;
     food.h = 10;
 
-
+    SDL_Rect enemy;
+    enemy.y = 370;
+    enemy.w = 20;
+    enemy.h = 20;
+    enemy.x = 30;
 
     int step = 5;
     int m = 0;
-    // Xoá toàn bộ màn hình và vẽ
-    //refreshScreen(window, renderer, filled_rect);
 
-    //Myfood(window, renderer, food);
-
-    int start=SDL_GetTicks();
     if(e.type == SDL_QUIT) break;
-
 
     while (true) {
         SDL_Delay(10);
@@ -76,14 +61,10 @@ int main(int argc, char* argv[])
                         break;
                     default: break;
                 }
-                //refreshScreen(window, renderer, filled_rect);
+
 
             }
-            if((filled_rect.x == food.x && filled_rect.y == food.y)||
-                ((filled_rect.x <= food.x && filled_rect.x + 20 >= food.x)&& (filled_rect.y + 20 >= food.y)&&(food.y >= filled_rect.y))||
-                ((filled_rect.x >= food.x && filled_rect.x <= food.x + 10)&& (filled_rect.y + 20 >= food.y)&&(food.y >= filled_rect.y))||
-                ((filled_rect.x <= food.x && filled_rect.x + 20 >= food.x)&& (filled_rect.y <= food.y + 10)&&(food.y <= filled_rect.y))||
-                ((filled_rect.x >= food.x && filled_rect.x <= food.x + 10)&& (filled_rect.y <= food.y + 10)&&(food.y <= filled_rect.y))){
+            if(eat(filled_rect.x, filled_rect.y, food.x, food.y)){
                    food.x = rand() % (400 - food.x) + 40;
                    food.y = rand() % (400 - food.y) + 40 ;
                     m++;
@@ -92,24 +73,24 @@ int main(int argc, char* argv[])
 
         }
 
-
         if(lose(filled_rect.x, filled_rect.y)){
             gameOver(renderer, e,m);
-
             break;
         }
 
-
-
+        if(death(filled_rect,enemy)){
+            gameOver(renderer, e,m);
+            break;
+        }
         int current = SDL_GetTicks();
-        //mytime(renderer,current,e);
+
         if(current >= 180000){
             gameOver(renderer,e,m);
             break;
         }
-        rendergame(window, renderer, filled_rect,food,e, m, current);
+        rendergame(window, renderer, filled_rect,food,enemy,e,m,current);
     }
-    //SDL_RenderPresent(renderer);
+
     quitSDL(window, renderer);
     }
     return 0;

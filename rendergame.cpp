@@ -3,16 +3,19 @@
 #include "rule.h"
 #include <SDL_ttf.h>
 using namespace std;
-void rendergame(SDL_Window* window, SDL_Renderer* renderer, const SDL_Rect& filled_rect1, const SDL_Rect& filled_rect2,SDL_Event event, int m,int time){
+void rendergame(SDL_Window* window, SDL_Renderer* renderer, const SDL_Rect& filled_rect1, const SDL_Rect& filled_rect2,SDL_Rect& filled_rect3,SDL_Event event, int m,int time){
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL_RenderClear(renderer);
 
-    // Đặt màu vẽ về trắng và vẽ hình chữ nhật
+
     SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
     SDL_RenderFillRect(renderer, &filled_rect1);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
     SDL_RenderFillRect(renderer, &filled_rect2);
+
+
+
     SDL_SetRenderDrawColor(renderer, 225, 0, 0, 255);
     SDL_Rect mill;
     mill.x = 0;
@@ -26,7 +29,7 @@ void rendergame(SDL_Window* window, SDL_Renderer* renderer, const SDL_Rect& fill
     nill.y = 0;
     nill.w = 200;
     nill.h = 600;
-    SDL_SetRenderDrawColor(renderer, 0, 200, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 250, 200, 255);
     SDL_RenderFillRect(renderer,& nill);
 
 
@@ -36,7 +39,7 @@ void rendergame(SDL_Window* window, SDL_Renderer* renderer, const SDL_Rect& fill
     qill.y = 400;
     qill.w = 600;
     qill.h = 200;
-    SDL_SetRenderDrawColor(renderer, 0, 200, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 250, 200, 255);
     SDL_RenderFillRect(renderer,& qill);
 
     SDL_Rect aill;
@@ -46,6 +49,27 @@ void rendergame(SDL_Window* window, SDL_Renderer* renderer, const SDL_Rect& fill
     aill.h = 30;
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer,& aill);
+
+    SDL_Rect bill;
+    bill.x = 450;
+    bill.y = 80;
+    bill.w = 100;
+    bill.h = 30;
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(renderer,& bill);
+
+    /*SDL_Rect enemy;
+    enemy.y = 370;
+    enemy.w = 20;
+    enemy.h = 20;
+    enemy.x = 30;*/
+    if(((time/1000)/10)%2== 0){
+        filled_rect3.x = 30 + ((time/1000)%10)*10 ;
+    } else {
+        filled_rect3.x = 110 - ((time/1000)%10)*10;
+    }
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderFillRect(renderer,& filled_rect3);
 
     SDL_SetRenderDrawColor(renderer, 220, 0, 0, 255);
     SDL_SetRenderDrawColor(renderer, 220, 0, 0, 255);
@@ -112,36 +136,40 @@ void rendergame(SDL_Window* window, SDL_Renderer* renderer, const SDL_Rect& fill
         a= 1;
 	}
 	else if(m >= 1 && m < 10){
-        a= 2;
+        a= 4;
 	}
 	else if(m >= 10){
-        a = 3;
+        a = 5;
 	}
+
+
 	SDL_Rect scoreRect;
 	scoreRect.w = 15*a;
 	scoreRect.h = 30;
-	scoreRect.x = 480;
 	scoreRect.y = 20;
+	if(m >= 1){
+        scoreRect.x = 485;
+	} else {
+        scoreRect.x = 530;
+	}
 	SDL_RenderCopy(renderer, scoreMessage, NULL, &scoreRect);
 
-
-	//TTF_Font* font = TTF_OpenFont((char*)"lightitalic.ttf", 30);
-
-	int aa = 180 - time/1000;
-
-    //if(aa == 0){
-      //  gameOver(renderer,event);
-    //}
-
-    SDL_Surface* Mytime = TTF_RenderText_Solid(font, ( to_string(aa)).c_str(), Black);
-	SDL_Texture* timeMessage = SDL_CreateTextureFromSurface(renderer, Mytime);
+    int aa = 180 - time/1000;
+	int minute = aa/60;
+    int second = aa - (minute*60);
+    SDL_Surface* Mytime;
+    if(second >= 10){
+    Mytime = TTF_RenderText_Solid(font, ( to_string(minute) +":"+ to_string(second)).c_str(), Black);
+    } else {
+    Mytime = TTF_RenderText_Solid(font, ( to_string(minute) +":0"+ to_string(second)).c_str(), Black);
+    }
+    SDL_Texture* timeMessage = SDL_CreateTextureFromSurface(renderer, Mytime);
 	SDL_Rect timeRect;
 	timeRect.w = 50;
 	timeRect.h = 30;
 	timeRect.x = 480;
 	timeRect.y = 80;
 	SDL_RenderCopy(renderer, timeMessage, NULL, &timeRect);
-
     SDL_RenderPresent(renderer);
     TTF_CloseFont(font);
     SDL_DestroyTexture(timeMessage);
